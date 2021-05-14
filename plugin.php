@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin name: Easy Digital Downloads - PDF Invoices Bulk Download
+ * Plugin name: EDD - PDF Invoices Bulk Download
  * Author:      Philipp Stracker
  * Author URI:  https://philippstracker.com
  * Description: Adds a Bulk-Download button to the "Easy Digital Downloads - PDF Invoices" plugin.

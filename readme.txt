@@ -1,4 +1,4 @@
-=== Easy Digital Downloads - PDF Invoice Bulk Downloader ===
+=== EDD - PDF Invoice Bulk Downloader ===
 Contributors: strackerphil-1
 Tags: bulk download, digital downloads, easy digital downloads, edd, pdf invoices, edd invoice, edd invoices
 Requires at least: 4.0
