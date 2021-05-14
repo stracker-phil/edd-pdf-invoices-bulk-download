@@ -42,6 +42,8 @@ add_action( 'edd_payments_table_do_bulk_action', 'edd_pdf_bulk_process', 10, 2 )
 function edd_pdf_bulk_register( $actions ) {
 	if ( class_exists( 'ZipArchive' ) ) {
 		$actions['pdf_bulk_download'] = __( 'Download PDF Invoices', 'edd_pdf_bulk' );
+
+		add_action( 'admin_print_footer_scripts', 'edd_pdf_bulk_fix_apply' );
 	}
 
 	return $actions;
@@ -277,4 +279,20 @@ function edd_pdf_bulk_is_invoice_link_allowed( $id ) {
 	}
 
 	return apply_filters( 'eddpdfi_is_invoice_link_allowed', $ret, $id );
+}
+
+/**
+ * Fixes the "Apply" button in the top filter bar. When it's clicked, the bulk
+ * action must be reset.
+ */
+function edd_pdf_bulk_fix_apply() {
+	?>
+	<script id="edd-pdf-bulk">
+		(function ($) {
+			$('#edd-payment-filters :input[type=submit]').click(function () {
+				$('#bulk-action-selector-top,#bulk-action-selector-bottom').val('-1');
+			})
+		}(jQuery))
+	</script>
+	<?php
 }
