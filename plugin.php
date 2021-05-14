@@ -82,6 +82,15 @@ function edd_pdf_bulk_process( $payment_id, $action ) {
 		apply_filters( 'edd_pdf_bulk_file_name', 'bulk-invoices.zip' )
 	);
 
+	if ( file_exists( $archive ) ) {
+		wp_delete_file( $archive );
+	}
+
+	// Stop here if no invoices were created.
+	if ( ! count( $invoices ) ) {
+		return;
+	}
+
 	if ( true === $zip->open( $archive, ZipArchive::CREATE ) ) {
 		foreach ( $invoices as $invoice ) {
 			$zip->addFile( $invoice, basename( $invoice ) );
