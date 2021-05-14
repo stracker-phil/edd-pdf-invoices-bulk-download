@@ -4,7 +4,7 @@
 
 The plugin in action:
 
-!()[https://content.screencast.com/users/Philipp-Stracker/folders/Snagit/media/89b9bae0-cdf9-4843-892b-e91e2aa0d7a7/2021-05-14_23-27-12%20(1).gif]
+!()[https://github.com/stracker-phil/edd-pdf-invoices-bulk-download/blob/main/assets/screenshot-1.png?raw=true]
 
 ### Requirements
 
