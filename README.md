@@ -4,7 +4,7 @@
 
 The plugin in action:
 
-!()[https://github.com/stracker-phil/edd-pdf-invoices-bulk-download/blob/main/assets/screenshot-1.png?raw=true]
+![screenshot-1](https://raw.githubusercontent.com/stracker-phil/edd-pdf-invoices-bulk-download/main/assets/screenshot-1.png)
 
 ### Requirements
 
