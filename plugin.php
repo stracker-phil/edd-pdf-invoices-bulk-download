@@ -67,10 +67,31 @@ function edd_pdf_bulk_process( $payment_id, $action ) {
 	// This function processes all payments at once, no need to call it again.
 	remove_action( 'edd_payments_table_do_bulk_action', 'edd_pdf_bulk_process' );
 
-	$ids      = isset( $_GET['payment'] ) ? (array) $_GET['payment'] : false;
+	if ( empty( $_GET['payment'] ) ) {
+		return;
+	}
+
+	if ( is_string( $_GET['payment'] ) ) {
+		// Sanitize a comma-separated list into an integer array.
+		$ids = array_map(
+			'intval',
+			explode( ',', wp_unslash( $_GET['payment'] ) )
+		);
+	} elseif ( is_array( $_GET['payment'] ) ) {
+		// Get a sanitized integer array.
+		$ids = array_map( 'intval', wp_unslash( $_GET['payment'] ) );
+	} else {
+		return;
+	}
+
 	$invoices = [];
 
 	foreach ( $ids as $id ) {
+		// The id could be 0 if it was no valid integer.
+		if ( ! $id ) {
+			continue;
+		}
+
 		$invoice = edd_pdf_bulk_prepare_invoice( $id );
 
 		if ( $invoice ) {
@@ -167,17 +188,17 @@ function edd_pdf_bulk_prepare_invoice( $payment_id ) {
 		return '';
 	}
 
+	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- the GET value is not sanitized as it's not parsed by this function, therefore it is XSS safe. The $orig_get is only used at the end of this function to restore the original GET value.
+	$orig_get = isset( $_GET['purchase_id'] ) ? $_GET['purchase_id'] : null;
+
 	// EDD_PDF_Invoice has some hardcoded $_GET accesses that we need to work around.
-	$orig_get            = isset( $_GET['purchase_id'] ) ? $_GET['purchase_id'] : null;
 	$_GET['purchase_id'] = $payment_id;
 
 	include_once( EDDPDFI_PLUGIN_DIR . '/tcpdf/tcpdf.php' );
 	include_once( EDDPDFI_PLUGIN_DIR . '/includes/EDD_PDF_Invoice.php' );
 
-	/*
-	 * The following code is taken from file "edd-pdf-invoices.php", in method
-	 * EDD_PDF_Invoices::generate_pdf_invoice().
-	 */
+	// -- Start of code fragment from `EDD_PDF_Invoices::generate_pdf_invoice()`.
+	// see file "edd-pdf-invoices.php" of the PDF Invoices plugin for details.
 
 	do_action( 'edd_pdfi_generate_pdf_invoice', $payment_id );
 
@@ -239,6 +260,8 @@ function edd_pdf_bulk_prepare_invoice( $payment_id ) {
 		apply_filters( 'eddpdfi_invoice_filename_prefix', 'Invoice-' ) . eddpdfi_get_payment_number( $eddpdfi_payment->ID ) . '.pdf'
 	);
 
+	// -- End of code fragment from `EDD_PDF_Invoices::generate_pdf_invoice()`.
+
 	// Delete existing invoice with the same name.
 	if ( file_exists( $path ) ) {
 		wp_delete_file( $path );
@@ -246,6 +269,7 @@ function edd_pdf_bulk_prepare_invoice( $payment_id ) {
 
 	$eddpdfi_pdf->Output( $path, 'F' );
 
+	// Restore the original GET value.
 	$_GET['purchase_id'] = $orig_get;
 
 	return $path;
