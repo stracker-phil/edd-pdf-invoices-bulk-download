@@ -188,9 +188,6 @@ function edd_pdf_bulk_prepare_invoice( $payment_id ) {
 		return '';
 	}
 
-	// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated -- the GET value is not sanitized as it's not parsed by this function, therefore it is XSS safe. The $orig_get is only used at the end of this function to restore the original GET value.
-	$orig_get = isset( $_GET['purchase_id'] ) ? $_GET['purchase_id'] : null;
-
 	// EDD_PDF_Invoice has some hardcoded $_GET accesses that we need to work around.
 	$_GET['purchase_id'] = $payment_id;
 
@@ -269,8 +266,7 @@ function edd_pdf_bulk_prepare_invoice( $payment_id ) {
 
 	$eddpdfi_pdf->Output( $path, 'F' );
 
-	// Restore the original GET value.
-	$_GET['purchase_id'] = $orig_get;
+	$_GET['purchase_id'] = null;
 
 	return $path;
 }
